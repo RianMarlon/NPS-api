@@ -24,7 +24,13 @@ export class createUsers1614100333432 implements MigrationInterface {
 					type: 'timestamp',
 					default: 'current_timestamp',
 				},
-			]
+			],
+			uniques: [
+        {
+          name: 'uq_users_email',
+          columnNames: ['email']
+        }
+      ]
 		}));
 	}
 
