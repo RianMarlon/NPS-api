@@ -9,6 +9,8 @@ const usersController = new UsersController();
 const surveysController = new SurveysController();
 
 routes.post('/users', usersController.create);
+
+routes.get('/surveys', surveysController.show);
 routes.post('/surveys', surveysController.create);
 
 export default routes;
