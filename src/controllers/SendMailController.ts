@@ -37,7 +37,6 @@ export class SendMailController {
 
     const surveyUserAlreadyExists = await surveysUsersRepository.findOne({
       where: {
-        value: null,
         user: {
           id: userByEmail.id
         },
@@ -57,7 +56,13 @@ export class SendMailController {
       link: process.env.URL_MAIL
     }
 
-    if (surveyUserAlreadyExists) {
+    if (surveyUserAlreadyExists && surveyUserAlreadyExists.value !== null) {
+      return response.status(400).json({
+        errorMessages: ['Pesquisa já respondida!']
+      });
+    }
+
+    else if (surveyUserAlreadyExists && surveyUserAlreadyExists.value === null) {
       variables.id = surveyUserAlreadyExists.id;
 
       await SendMailService.execute(email, surveyById.title, variables, npsPath);
@@ -66,20 +71,22 @@ export class SendMailController {
         survey_user: surveyUserAlreadyExists
       });
     }
-    
-    const surveyUser = surveysUsersRepository.create({
-      user: userByEmail,
-      survey: surveyById
-    });
 
-    await surveysUsersRepository.save(surveyUser);
-
-    variables.id = surveyUser.id;
-
-    await SendMailService.execute(email, surveyById.title, variables, npsPath);
-
-    return response.status(201).json({
-      survey_user: surveyUser
-    });
+    else {
+      const surveyUser = surveysUsersRepository.create({
+        user: userByEmail,
+        survey: surveyById
+      });
+  
+      await surveysUsersRepository.save(surveyUser);
+  
+      variables.id = surveyUser.id;
+  
+      await SendMailService.execute(email, surveyById.title, variables, npsPath);
+  
+      return response.status(201).json({
+        survey_user: surveyUser
+      });
+    }
   }
 }
