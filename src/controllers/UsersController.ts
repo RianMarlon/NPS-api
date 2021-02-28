@@ -1,10 +1,21 @@
 import { Request, Response } from 'express';
 import { getCustomRepository } from 'typeorm';
+import * as yup from 'yup';
+
 import { UsersRepository } from '../repositories/UsersRepository';
 
 export class UsersController {
   async create(request: Request, response: Response) {
     const { name, email } = request.body;
+
+    const schema = yup.object().shape({
+      name: yup.string().required('Nome não informado!'),
+      email: yup.string().required('E-mail não informado!').email('E-mail inválido!')
+    });
+
+    await schema.validate(request.body, {
+      abortEarly: false
+    });
 
     const usersRepository = getCustomRepository(UsersRepository);
 
