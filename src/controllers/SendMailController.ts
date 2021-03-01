@@ -7,6 +7,7 @@ import { Request, Response } from 'express';
 import { SurveysRepository } from '../repositories/SurveysRepository';
 import { SurveysUsersRepository } from '../repositories/SurveysUsersRepository';
 import SendMailService from '../services/SendMailService';
+import { AppError } from '../errors/AppError';
 
 export class SendMailController {
   async execute(request: Request, response: Response) {
@@ -30,9 +31,7 @@ export class SendMailController {
     });
 
     if (!userByEmail) {
-      return response.status(400).json({
-        errorMessages: ['Usuário não existe!']
-      })
+      throw new AppError('Usuário não existe!', 400);
     }
 
     const surveyById = await surveysRepository.findOne({
@@ -40,9 +39,7 @@ export class SendMailController {
     });
     
     if (!surveyById) {
-      return response.status(400).json({
-        errorMessages: ['Pesquisa não existe!']
-      });
+      throw new AppError('Pesquisa não existe!', 400);
     }
 
     const surveyUserAlreadyExists = await surveysUsersRepository.findOne({
@@ -67,9 +64,7 @@ export class SendMailController {
     }
 
     if (surveyUserAlreadyExists && surveyUserAlreadyExists.value !== null) {
-      return response.status(400).json({
-        errorMessages: ['Pesquisa já respondida!']
-      });
+      throw new AppError('Pesquisa já respondida!', 400);
     }
 
     else if (surveyUserAlreadyExists && surveyUserAlreadyExists.value === null) {
