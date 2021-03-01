@@ -6,8 +6,7 @@
   "scripts": {
     "dev": "tsnd --transpile-only --ignore-watch node-modules ./src/server.ts",
     "typeorm": "tsnd node_modules/typeorm/cli.js",
-    "test": "cross-env NODE_ENV=test jest",
-    "posttest": "rimraf ./src/database/database.test.sqlite"
+    "test": "cross-env NODE_ENV=test jest -i"
   },
   "dependencies": {
     "express": "^4.17.1",
