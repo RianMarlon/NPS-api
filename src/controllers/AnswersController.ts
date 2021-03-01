@@ -1,3 +1,4 @@
+import { AppError } from './../errors/AppError';
 import { SurveysUsersRepository } from './../repositories/SurveysUsersRepository';
 import { Request, Response } from "express";
 import { getCustomRepository } from 'typeorm';
@@ -14,9 +15,7 @@ export class AnswersController {
     });
 
     if (!surveyUserById) {
-      return response.status(400).json({
-        errorMessages: ['Pesquisa com o usuário não existe!']
-      });
+      throw new AppError('Pesquisa com o usuário não existe!', 400);
     }
 
     surveyUserById.value = Number(value);
