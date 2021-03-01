@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { getCustomRepository } from 'typeorm';
 import * as yup from 'yup';
+import { AppError } from '../errors/AppError';
 
 import { UsersRepository } from '../repositories/UsersRepository';
 
@@ -24,9 +25,7 @@ export class UsersController {
     });
 
     if (userAlreadyExists) {
-      return response.status(400).json({
-        errorMessages: ['Existe um usuário com o e-mail informado!']
-      })
+      throw new AppError('Existe um usuário com o e-mail informado!', 400);
     }
 
     const user = usersRepository.create({
